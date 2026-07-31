@@ -1,0 +1,1601 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Burmese Boy TTS - Professional Voice System</title>
+<link href="https://fonts.googleapis.com/css2?family=Padauk:wght@400;700&family=Noto+Sans+Myanmar:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  
+  :root {
+    --gold: #C9A96E;
+    --gold-light: #D4B87A;
+    --gold-dark: #A08050;
+    --maroon: #6B2737;
+    --maroon-light: #8B3A4A;
+    --cream: #F5E6D3;
+    --cream-dark: #E8D5C0;
+    --bg-dark: #1A1A1A;
+    --bg-card: #242424;
+    --bg-elevated: #2A2A2A;
+    --text-primary: #F5E6D3;
+    --text-secondary: #B8A89A;
+    --border-subtle: rgba(201, 169, 110, 0.15);
+    --shadow-soft: 0 2px 8px rgba(0,0,0,0.3);
+    --shadow-medium: 0 4px 16px rgba(0,0,0,0.4);
+    --pink: #E91E63;
+    --pink-light: #EC407A;
+    --pink-dark: #C2185B;
+    --purple: #9C27B0;
+    --purple-light: #BA68C8;
+    --purple-dark: #7B1FA2;
+    --blue: #5C6BC0;
+    --blue-light: #7986CB;
+    --gradient-primary: linear-gradient(135deg, #EC407A 0%, #BA68C8 100%);
+    --gradient-slider: linear-gradient(90deg, #5C6BC0 0%, #9C27B0 50%, #E91E63 100%);
+    --green: #4CAF50;
+    --green-light: #66BB6A;
+  }
+
+  body.light {
+    --bg-dark: #FAF7F2;
+    --bg-card: #FFFFFF;
+    --bg-elevated: #FDFBF8;
+    --text-primary: #2C2C2C;
+    --text-secondary: #6B6B6B;
+    --border-subtle: rgba(160, 128, 80, 0.2);
+    --shadow-soft: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-medium: 0 4px 16px rgba(0,0,0,0.12);
+  }
+
+  body {
+    font-family: 'Noto Sans Myanmar', 'Padauk', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.6;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cpath d='M50 20 L60 30 L50 40 L40 30 Z' fill='none' stroke='%23C9A96E' stroke-width='0.5' opacity='0.03'/%3E%3Cpath d='M20 50 L30 60 L20 70 L10 60 Z' fill='none' stroke='%236B2737' stroke-width='0.5' opacity='0.02'/%3E%3Cpath d='M80 50 L90 60 L80 70 L70 60 Z' fill='none' stroke='%23C9A96E' stroke-width='0.5' opacity='0.02'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 20px;
+    padding-bottom: 40px;
+  }
+
+  /* Top Bar */
+  .top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--bg-dark);
+    border-bottom: 1px solid var(--border-subtle);
+    z-index: 1000;
+    transition: background 0.3s ease;
+  }
+
+  .lang-selector {
+    display: flex;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+  }
+
+ .lang-btn {
+    padding: 8px 14px;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+  }
+
+  .lang-btn.active {
+    background: var(--gold);
+    color: var(--bg-dark);
+  }
+
+  .theme-toggle {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    padding: 80px 0 30px;
+  }
+
+  .logo-wrapper {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+
+  .logo-circle {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-medium);
+    overflow: hidden;
+  }
+
+  .logo-circle::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 10px;
+  }
+
+  .logo-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .logo-subtitle {
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  /* Section Headers */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 32px 0 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .section-icon {
+    font-size: 18px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: 0.3px;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 12px 16px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+  }
+
+  .tab-btn.active {
+    background: var(--bg-elevated);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* Voice Grid */
+  .voice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .voice-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .voice-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .voice-card.selected {
+    border-color: var(--gold);
+    background: var(--bg-elevated);
+  }
+
+  .voice-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-light));
+  }
+
+  .voice-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .voice-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+    line-height: 1.3;
+  }
+
+  .voice-name-en {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  .voice-type {
+    font-size: 11px;
+    color: var(--text-secondary);
+  }
+
+  .add-voice-card {
+    border: 1px dashed var(--gold);
+    background: transparent;
+    justify-content: center;
+    color: var(--gold);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* Emotion Grid */
+  .emotion-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .emotion-btn {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 14px 10px;
+    color: var(--text-primary);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: inherit;
+  }
+
+  .emotion-btn:hover {
+    border-color: var(--gold);
+  }
+
+  .emotion-btn.active {
+    background: var(--maroon);
+    border-color: var(--maroon);
+    color: var(--cream);
+  }
+
+ .emotion-emoji {
+    font-size: 16px;
+  }
+
+  /* Control Cards - Updated Colors */
+  .control-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .control-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  .control-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .control-label span {
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 400;
+    margin-left: 6px;
+  }
+
+  .value-display {
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: white;
+    min-width: 70px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .value-display.speed {
+    background: var(--gradient-primary);
+  }
+
+  .value-display.pitch {
+    background: linear-gradient(135deg, var(--purple) 0%, var(--purple-light) 100%);
+  }
+
+  .slider-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .slider-btn {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    border: 2px solid var(--border-subtle);
+    background: var(--bg-elevated);
+    color: var(--text-primary);
+    font-size: 24px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .slider-btn:hover {
+    border-color: var(--gold);
+    background: var(--bg-card);
+    transform: translateY(-2px);
+  }
+
+  .slider-container {
+    flex: 1;
+    position: relative;
+    height: 60px;
+    display: flex;
+    align-items: center;
+  }
+
+  .slider-track {
+    width: 100%;
+    height: 12px;
+    border-radius: 6px;
+    background: var(--gradient-slider);
+    position: relative;
+    cursor: pointer;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+  }
+
+  .slider-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: white;
+    border: 3px solid var(--pink);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    cursor: grab;
+    transition: left 0.1s ease;
+  }
+
+  .slider-thumb:active {
+    cursor: grabbing;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  /* Text Input */
+  .text-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 24px 0;
+  }
+
+  .text-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .text-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .text-buttons {
+    display: flex;
+    gap: 8px;
+  }
+
+  .text-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+  }
+
+  .text-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .text-area {
+    width: 100%;
+    min-height: 160px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 14px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    line-height: 1.8;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .text-area:focus {
+    border-color: var(--gold);
+  }
+
+  .text-area::placeholder {
+    color: var(--text-secondary);
+  }
+
+  .char-counter {
+    text-align: right;
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 8px;
+  }
+
+  .char-counter.limit {
+    color: var(--maroon);
+  }
+
+  /* Generate Button - Updated Gradient */
+  .generate-btn {
+    width: 100%;
+    padding: 18px;
+    background: var(--gradient-primary);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    margin: 24px 0;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 20px rgba(236, 64, 122, 0.4);
+  }
+
+  .generate-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(236, 64, 122, 0.5);
+  }
+
+  .generate-btn:active {
+    transform: translateY(0);
+  }
+
+  /* Audio Player Section */
+  .audio-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 16px;
+    padding: 24px;
+    margin: 24px 0;
+    display: none;
+  }
+
+  .audio-section.show {
+    display: block;
+  }
+
+  .audio-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .audio-waveform {
+    background: var(--bg-elevated);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    text-align: center;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .waveform-placeholder {
+    color: var(--text-secondary);
+    font-size: 13px;
+  }
+
+  .audio-player-wrapper {
+    background: white;
+    border-radius: 50px;
+    padding: 12px 20px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .play-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--bg-dark);
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+  }
+
+  .play-btn:hover {
+    transform: scale(1.1);
+  }
+
+  .audio-time {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--bg-dark);
+    min-width: 100px;
+  }
+
+  .volume-slider {
+    flex: 1;
+    height: 4px;
+    background: var(--border-subtle);
+    border-radius: 2px;
+    position: relative;
+    cursor: pointer;
+  }
+
+  .volume-fill {
+    height: 100%;
+    background: var(--bg-dark);
+    border-radius: 2px;
+    width: 70%;
+  }
+
+  .volume-icon {
+    font-size: 20px;
+    color: var(--bg-dark);
+  }
+
+  .audio-name-input {
+    width: 100%;
+    padding: 14px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    margin-bottom: 12px;
+    outline: none;
+  }
+
+  .audio-name-input:focus {
+    border-color: var(--gold);
+  }
+
+  .audio-name-input::placeholder {
+    color: var(--text-secondary);
+  }
+
+  .file-info {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .file-info input {
+    flex: 1;
+    padding: 12px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+  }
+
+  .file-ext {
+    padding: 12px 16px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .download-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .download-btn {
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .download-btn.free {
+    background: linear-gradient(135deg, var(--green), var(--green-light));
+    color: white;
+  }
+
+  .download-btn.vip {
+    background: linear-gradient(135deg, var(--blue), var(--blue-light));
+    color: white;
+  }
+
+  .download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+
+  .download-icon {
+    font-size: 20px;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-overlay.show {
+    display: flex;
+  }
+
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-medium);
+  }
+
+  .modal-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .modal-field {
+    margin-bottom: 20px;
+  }
+
+  .modal-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+  }
+
+  .modal-input {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 14px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+
+  .modal-input:focus {
+    border-color: var(--gold);
+  }
+
+  .modal-input::placeholder {
+    color: var(--text-secondary);
+  }
+
+  .file-input-wrapper input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg-elevated);
+    border: 1px dashed var(--border-subtle);
+    border-radius: 8px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+  }
+
+  .modal-hint {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 6px;
+  }
+
+  .modal-buttons {
+   display: flex;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .modal-btn {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s ease;
+  }
+
+  .modal-btn.cancel {
+    background: transparent;
+    color: var(--text-secondary);
+  }
+
+  .modal-btn.cancel:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .modal-btn.confirm {
+    background: var(--maroon);
+    border-color: var(--maroon);
+    color: var(--cream);
+  }
+
+  .modal-btn.confirm:hover {
+    background: var(--maroon-light);
+  }
+
+  .voice-delete-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    background: transparent;
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+  }
+
+  .voice-delete-btn:hover {
+    border-color: var(--maroon);
+    color: var(--maroon);
+  }
+
+  /* Pattern Divider */
+  .pattern-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border-subtle), transparent);
+    margin: 32px 0;
+    position: relative;
+  }
+
+  .pattern-divider::before {
+    content: '◆';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: var(--gold);
+    font-size: 8px;
+    background: var(--bg-dark);
+    padding: 0 12px;
+  }
+
+  .clone-count {
+    font-size: 11px;
+    color: var(--text-secondary);
+    font-weight: 400;
+  }
+
+  @media (max-width: 360px) {
+    .emotion-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <div class="lang-selector">
+    <button class="lang-btn active" onclick="setLanguage('mm')" id="lang-mm">မြန်မာ</button>
+    <button class="lang-btn" onclick="setLanguage('en')" id="lang-en">English</button>
+  </div>
+  <div class="theme-toggle" onclick="toggleTheme()">
+    <span id="theme-icon">☀️</span>
+    <span id="theme-text" data-i18n="theme_light">Light</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Header with New Logo -->
+  <div class="header">
+    <div class="logo-wrapper">
+      <div class="logo-circle">
+        <img src="https://i.imgur.com/MzGh23P.png" alt="Burmese Boy TTS Logo" class="logo-img">
+      </div>
+    </div>
+    <div class="logo-title">Burmese Boy TTS</div>
+    <div class="logo-subtitle" data-i18n="logo_subtitle">Professional Voice System</div>
+  </div>
+
+  <!-- Voice Selection -->
+  <div class="section-header">
+    <span class="section-icon">🎙️</span>
+    <span class="section-title" data-i18n="voice_selection">Voice Selection</span>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('premade')" data-i18n="tab_premade">Pre-made Voices</button>
+    <button class="tab-btn" onclick="switchTab('custom')" data-i18n="tab_custom">My Voices (<span class="clone-count" id="clone-count">0</span>/5)</button>
+  </div>
+
+  <!-- Pre-made Voices -->
+  <div id="premade-voices" class="voice-grid">
+    <div class="voice-card selected" onclick="selectVoice(this, 'premade_1')">
+      <div class="voice-avatar"></div>
+      <div class="voice-info">
+        <div class="voice-name">မြမြ</div>
+        <div class="voice-name-en">Mya Mya</div>
+      </div>
+    </div>
+    <div class="voice-card" onclick="selectVoice(this, 'premade_2')">
+      <div class="voice-avatar">👨</div>
+      <div class="voice-info">
+        <div class="voice-name">မောင်ဇော်</div>
+        <div class="voice-name-en">Mg Zaw</div>
+      </div>
+    </div>
+    <div class="voice-card" onclick="selectVoice(this, 'premade_3')">
+      <div class="voice-avatar"></div>
+      <div class="voice-info">
+        <div class="voice-name">သီရိ</div>
+        <div class="voice-name-en">Thiri</div>
+      </div>
+    </div>
+    <div class="voice-card" onclick="selectVoice(this, 'premade_4')">
+      <div class="voice-avatar"></div>
+      <div class="voice-info">
+        <div class="voice-name">အကိုလေး</div>
+        <div class="voice-name-en">A Ko Lay</div>
+      </div>
+    </div>
+    <div class="voice-card" onclick="selectVoice(this, 'premade_5')">
+      <div class="voice-avatar">👩‍💼</div>
+      <div class="voice-info">
+        <div class="voice-name">လှမေး</div>
+        <div class="voice-name-en">Hla May</div>
+      </div>
+    </div>
+    <div class="voice-card" onclick="selectVoice(this, 'premade_6')">
+      <div class="voice-avatar"></div>
+      <div class="voice-info">
+        <div class="voice-name">ကျော်ကြီး</div>
+        <div class="voice-name-en">Kyaw Gyi</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Voices -->
+  <div id="custom-voices" class="voice-grid" style="display:none;">
+    <div class="voice-card add-voice-card" onclick="openCloneModal()">
+      <span style="font-size:20px;">+</span>
+      <span data-i18n="create_new_voice">Create New Voice</span>
+    </div>
+  </div>
+
+  <div class="pattern-divider"></div>
+
+  <!-- Emotions -->
+  <div class="section-header">
+    <span class="section-icon">🎭</span>
+    <span class="section-title" data-i18n="emotion_style">Emotion & Style</span>
+  </div>
+
+  <div class="emotion-grid">
+    <button class="emotion-btn active" onclick="selectEmotion(this)">
+      <span class="emotion-emoji">😊</span>
+      <span data-i18n="emotion_happy">Happy</span>
+    </button>
+    <button class="emotion-btn" onclick="selectEmotion(this)">
+      <span class="emotion-emoji"></span>
+      <span data-i18n="emotion_calm">Calm</span>
+    </button>
+    <button class="emotion-btn" onclick="selectEmotion(this)">
+      <span class="emotion-emoji"></span>
+      <span data-i18n="emotion_news">News</span>
+    </button>
+    <button class="emotion-btn" onclick="selectEmotion(this)">
+      <span class="emotion-emoji"></span>
+      <span data-i18n="emotion_reading">Reading</span>
+    </button>
+    <button class="emotion-btn" onclick="selectEmotion(this)">
+      <span class="emotion-emoji"></span>
+      <span data-i18n="emotion_sad">Sad</span>
+    </button>
+    <button class="emotion-btn" onclick="selectEmotion(this)">
+      <span class="emotion-emoji"></span>
+      <span data-i18n="emotion_angry">Angry</span>
+    </button>
+  </div>
+
+  <div class="pattern-divider"></div>
+
+  <!-- Controls -->
+  <div class="section-header">
+    <span class="section-icon">⚙️</span>
+    <span class="section-title" data-i18n="voice_controls">Voice Controls</span>
+  </div>
+
+  <!-- Speed Control -->
+  <div class="control-card">
+    <div class="control-header">
+      <div class="control-label"><span data-i18n="speed_label">အမြန်နှုန်း</span> <span>(SPEED)</span></div>
+      <div class="value-display speed" id="speed-display">+၀</div>
+    </div>
+    <div class="slider-wrapper">
+      <button class="slider-btn" onclick="adjustSlider('speed', -0.1)">−</button>
+      <div class="slider-container">
+        <div class="slider-track" id="speed-track">
+          <div class="slider-thumb" id="speed-thumb" style="left: 33.33%;"></div>
+        </div>
+      </div>
+      <button class="slider-btn" onclick="adjustSlider('speed', 0.1)">+</button>
+    </div>
+  </div>
+
+  <!-- Pitch Control -->
+  <div class="control-card">
+    <div class="control-header">
+      <div class="control-label"><span data-i18n="pitch_label">အသံအနိမ့်/အမြင့်</span> <span>(PITCH)</span></div>
+      <div class="value-display pitch" id="pitch-display">+၀</div>
+    </div>
+    <div class="slider-wrapper">
+      <button class="slider-btn" onclick="adjustSlider('pitch', -1)">−</button>
+      <div class="slider-container">
+        <div class="slider-track" id="pitch-track">
+          <div class="slider-thumb" id="pitch-thumb" style="left: 50%;"></div>
+        </div>
+      </div>
+      <button class="slider-btn" onclick="adjustSlider('pitch', 1)">+</button>
+    </div>
+  </div>
+
+  <!-- Text Input -->
+  <div class="text-section">
+    <div class="text-header">
+      <span class="text-label" data-i18n="text_input">Text Input</span>
+      <div class="text-buttons">
+        <button class="text-btn" onclick="pasteText()" data-i18n="btn_paste">Paste</button>
+        <button class="text-btn" onclick="clearText()" data-i18n="btn_clear">Clear</button>
+      </div>
+    </div>
+    <textarea class="text-area" id="text-input" maxlength="10000" data-i18n-placeholder="text_placeholder" placeholder="Enter your text here... (Up to 10,000 characters)"></textarea>
+    <div class="char-counter"><span id="char-count">0</span> / 10,000</div>
+  </div>
+
+  <!-- Generate Button -->
+  <button class="generate-btn" onclick="generateSpeech()" data-i18n="btn_generate">
+    အသံထုတ်ယူမည်
+  </button>
+
+  <!-- Audio Player Section -->
+  <div class="audio-section" id="audio-section">
+    <div class="audio-title" data-i18n="audio_title">အသံဖိုင်</div>
+    
+    <div class="audio-waveform">
+      <div class="waveform-placeholder">--------------------</div>
+    </div>
+
+    <div class="audio-player-wrapper">
+      <button class="play-btn" id="play-btn" onclick="togglePlay()">▶</button>
+      <div class="audio-time" id="audio-time">0:00 / 0:00</div>
+      <div class="volume-slider" onclick="adjustVolume(event)">
+        <div class="volume-fill" id="volume-fill"></div>
+      </div>
+      <div class="volume-icon">🔊</div>
+    </div>
+
+    <input type="text" class="audio-name-input" id="audio-name" data-i18n-placeholder="audio_name_placeholder" placeholder="အသံဖိုင်နာမည် ပေးပါ (ဥပမာ - မိတ်ဆက်စာ)">
+
+    <div class="file-info">
+      <input type="text" value="10" id="file-number" readonly>
+      <div class="file-ext">.mp3</div>
+    </div>
+
+    <div class="download-buttons">
+      <button class="download-btn free" onclick="downloadFree()">
+        <span class="download-icon">⬇️</span>
+        <span data-i18n="download_free">အသံဖိုင်ဒေါင်းလုဒ်<br>မည်</span>
+      </button>
+      <button class="download-btn vip" onclick="downloadVIP()">
+        <span class="download-icon">🔐💵</span>
+        <span data-i18n="download_vip">VIP စာရင်း<br>သွင်းရန် (Sub)</span>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<!-- Voice Clone Modal -->
+<div class="modal-overlay" id="clone-modal">
+  <div class="modal">
+    <div class="modal-title" data-i18n="modal_title">Create Custom Voice</div>
+    
+    <div class="modal-field">
+      <label class="modal-label" data-i18n="modal_voice_name">Voice Name</label>
+      <input type="text" class="modal-input" id="clone-name" data-i18n-placeholder="modal_voice_name_placeholder" placeholder="e.g., My Voice, Mom's Voice">
+    </div>
+
+    <div class="modal-field">
+      <label class="modal-label" data-i18n="modal_audio_sample">Audio Sample (MP3/WAV)</label>
+      <div class="file-input-wrapper">
+        <input type="file" id="clone-file" accept="audio/*">
+      </div>
+      <div class="modal-hint" data-i18n="modal_hint">Minimum 1 minute of clear audio required</div>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="modal-btn cancel" onclick="closeCloneModal()" data-i18n="btn_cancel">Cancel</button>
+      <button class="modal-btn confirm" onclick="submitClone()" data-i18n="btn_create">Create</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Myanmar Numerals
+  const myanmarNumerals = {
+    '0': '၀', '1': '၁', '2': '၂', '3': '၃', '4': '၄',
+    '5': '၅', '6': '၆', '7': '၇', '8': '၈', '9': '၉',
+    '.': '.', '-': '-'
+  };
+
+  function toMyanmarNumeral(num) {
+    return num.toString().split('').map(char => myanmarNumerals[char] || char).join('');
+  }
+
+  // Translations
+  const translations = {
+    mm: {
+      theme_light: 'အလင်း',
+      theme_dark: 'အမှောင်',
+      logo_subtitle: 'ပရော်ဖက်ရှင်နယ် အသံစနစ်',
+      voice_selection: 'အသံရွေးချယ်ရန်',
+      tab_premade: 'အသင့်အသံများ',
+      tab_custom: 'ကျွန်ုပ်၏အသံများ',
+      create_new_voice: '+ အသံအသစ် ဖန်တီးရန်',
+      emotion_style: 'စိတ်ခံစားမှုနှင့် ပုံစံ',
+      emotion_happy: 'ပျော်ရွှင်',
+      emotion_calm: 'တည်ငြိမ်',
+      emotion_news: 'သတင်း',
+      emotion_reading: 'စာဖတ်',
+      emotion_sad: 'ဝမ်းနည်း',
+      emotion_angry: 'ဒေါသ',
+      voice_controls: 'အသံထိန်းချုပ်မှု',
+      speed_label: 'အမြန်နှုန်း',
+      pitch_label: 'အသံအနိမ့်/အမြင့်',
+      text_input: 'စာသားထည့်ရန်',
+      btn_paste: 'ကူးထည့်',
+      btn_clear: 'ရှင်းလင်း',
+      text_placeholder: 'နေရာတွင် စာသားရိုက်ထည့်ပါ... (စာလုံးရေ ၁၀,၀၀ အထိ)',
+      btn_generate: 'အသံထုတ်ယူမည်',
+      audio_title: 'အသံဖိုင်',
+      audio_name_placeholder: 'အသံဖိုင်နာမည် ပေးပါ (ဥပမာ - မိတ်ဆက်စာ)',
+      download_free: 'အသံဖိုင်ဒေါင်းလုဒ်\nမည်',
+      download_vip: 'VIP စာရင်း\nသွင်းရန် (Sub)',
+      modal_title: 'ကိုယ်ပိုင်အသံ ဖန်တီးရန်',
+      modal_voice_name: 'အသံနာမည်',
+      modal_voice_name_placeholder: 'ပမာ - ကျွန်ုပ်၏အသံ',
+      modal_audio_sample: 'အသံနမူနာ (MP3/WAV)',
+      modal_hint: 'ကြည်လင်သော အသံ အနည်းဆုံး ၁ မိနစ် လိုအပ်ပါသည်',
+      btn_cancel: 'ပယ်ဖျက်',
+      btn_create: 'ဖန်တီးမည်',
+      alert_max_voices: 'ကိုယ်ပိုင်အသံ ၅ ခုထက် ပိုမဖန်တီးနိုင်ပါ',
+      alert_enter_name: 'အသံနာမည် ထည့်ပါ',
+      alert_upload_file: 'အသံဖိုင် တင်ပါ',
+      alert_voice_created: 'အသံ "',
+      alert_created_success: '" ကို အောင်မြင်စွာ န်တီးပြီးပါပြီ',
+      alert_delete_confirm: 'ဤအသံကို ဖျက်မည် သေချာပါသလား?',
+      alert_enter_text: 'စာသား ထည့်ပါ',
+      alert_clipboard: 'Clipboard ခွင့်ပြုချက် လိုအပ်ပါသည်',
+      custom_voice_type: 'ကိုယ်ပိုင်အသံ'
+    },
+    en: {
+      theme_light: 'Light',
+      theme_dark: 'Dark',
+      logo_subtitle: 'Professional Voice System',
+      voice_selection: 'Voice Selection',
+      tab_premade: 'Pre-made Voices',
+      tab_custom: 'My Voices',
+      create_new_voice: '+ Create New Voice',
+      emotion_style: 'Emotion & Style',
+      emotion_happy: 'Happy',
+      emotion_calm: 'Calm',
+      emotion_news: 'News',
+      emotion_reading: 'Reading',
+      emotion_sad: 'Sad',
+      emotion_angry: 'Angry',
+      voice_controls: 'Voice Controls',
+      speed_label: 'Speed',
+      pitch_label: 'Pitch',
+      text_input: 'Text Input',
+      btn_paste: 'Paste',
+      btn_clear: 'Clear',
+      text_placeholder: 'Enter your text here... (Up to 10,000 characters)',
+      btn_generate: 'Generate Voice',
+      audio_title: 'Audio File',
+      audio_name_placeholder: 'Give audio a name (e.g., Introduction)',
+      download_free: 'Download Audio',
+      download_vip: 'VIP Subscribe',
+      modal_title: 'Create Custom Voice',
+      modal_voice_name: 'Voice Name',
+      modal_voice_name_placeholder: 'e.g., My Voice, Mom\'s Voice',
+      modal_audio_sample: 'Audio Sample (MP3/WAV)',
+      modal_hint: 'Minimum 1 minute of clear audio required',
+      btn_cancel: 'Cancel',
+      btn_create: 'Create',
+      alert_max_voices: 'Maximum 5 custom voices allowed',
+      alert_enter_name: 'Please enter a voice name',
+      alert_upload_file: 'Please upload an audio file',
+      alert_voice_created: 'Voice "',
+      alert_created_success: '" created successfully!',
+      alert_delete_confirm: 'Delete this voice?',
+      alert_enter_text: 'Please enter some text',
+      alert_clipboard: 'Clipboard permission required',
+      custom_voice_type: 'Custom Voice'
+    }
+  };
+
+  let currentLang = 'mm';
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    document.getElementById('lang-mm').classList.toggle('active', lang === 'mm');
+    document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+    
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (translations[lang][key]) {
+        if (el.querySelector('.clone-count')) {
+          const count = el.querySelector('.clone-count').textContent;
+          el.innerHTML = translations[lang][key] + ' (<span class="clone-count" id="clone-count">' + count + '</span>/5)';
+        } else {
+          el.textContent = translations[lang][key];
+        }
+      }
+    });
+    
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (translations[lang][key]) {
+        el.placeholder = translations[lang][key];
+      }
+    });
+    
+    const isLight = document.body.classList.contains('light');
+    document.getElementById('theme-text').textContent = isLight ? translations[lang].theme_dark : translations[lang].theme_light;
+    localStorage.setItem('language', lang);
+  }
+
+  function toggleTheme() {
+    document.body.classList.toggle('light');
+    const isLight = document.body.classList.contains('light');
+    document.getElementById('theme-icon').textContent = isLight ? '🌙' : '☀️';
+    document.getElementById('theme-text').textContent = isLight ? translations[currentLang].theme_dark : translations[currentLang].theme_light;
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+  }
+
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light');
+    document.getElementById('theme-icon').textContent = '🌙';
+  }
+  
+  if (localStorage.getItem('language')) {
+    setLanguage(localStorage.getItem('language'));
+  } else {
+    setLanguage('mm');
+  }
+
+  let speedValue = 1.0;
+  let pitchValue = 0;
+  const speedMin = 0.5, speedMax = 2.0;
+  const pitchMin = -10, pitchMax = 10;
+  let customVoices = [];
+  let selectedVoiceId = 'premade_1';
+  let isPlaying = false;
+  let audioDuration = 75; // 1:15 in seconds
+
+  function switchTab(tab) {
+    const premadeBtn = document.querySelectorAll('.tab-btn')[0];
+    const customBtn = document.querySelectorAll('.tab-btn')[1];
+    const premadeGrid = document.getElementById('premade-voices');
+    const customGrid = document.getElementById('custom-voices');
+
+    if (tab === 'premade') {
+      premadeBtn.classList.add('active');
+      customBtn.classList.remove('active');
+      premadeGrid.style.display = 'grid';
+      customGrid.style.display = 'none';
+    } else {
+      customBtn.classList.add('active');
+      premadeBtn.classList.remove('active');
+      premadeGrid.style.display = 'none';
+      customGrid.style.display = 'grid';
+    }
+  }
+
+  function selectVoice(element, voiceId) {
+    document.querySelectorAll('.voice-card').forEach(card => card.classList.remove('selected'));
+    element.classList.add('selected');
+    selectedVoiceId = voiceId;
+  }
+
+  function selectEmotion(btn) {
+    document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function adjustSlider(type, delta) {
+    if (type === 'speed') {
+      speedValue = Math.max(speedMin, Math.min(speedMax, speedValue + delta));
+      updateSlider('speed', speedValue, speedMin, speedMax);
+      updateSpeedDisplay();
+    } else {
+      pitchValue = Math.max(pitchMin, Math.min(pitchMax, pitchValue + delta));
+      updateSlider('pitch', pitchValue, pitchMin, pitchMax);
+      updatePitchDisplay();
+    }
+  }
+
+  function updateSlider(type, value, min, max) {
+    const percent = ((value - min) / (max - min)) * 100;
+    document.getElementById(type + '-thumb').style.left = percent + '%';
+  }
+
+  function updateSpeedDisplay() {
+    const display = document.getElementById('speed-display');
+    const value = ((speedValue - 1) * 100).toFixed(0);
+    display.textContent = (value >= 0 ? '+' : '') + toMyanmarNumeral(value);
+  }
+
+  function updatePitchDisplay() {
+    const display = document.getElementById('pitch-display');
+    const value = pitchValue;
+    display.textContent = (value >= 0 ? '+' : '') + toMyanmarNumeral(value);
+  }
+
+  function setupSliderDrag(type, min, max, getValue, setValue, updateDisplay) {
+    const track = document.getElementById(type + '-track');
+    const thumb = document.getElementById(type + '-thumb');
+    let dragging = false;
+
+    function updateFromEvent(e) {
+      const rect = track.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      let percent = (clientX - rect.left) / rect.width;
+      percent = Math.max(0, Math.min(1, percent));
+      const value = min + percent * (max - min);
+      setValue(value);
+      thumb.style.left = (percent * 100) + '%';
+      if (updateDisplay) updateDisplay();
+    }
+
+    thumb.addEventListener('mousedown', (e) => { dragging = true; e.preventDefault(); });
+    thumb.addEventListener('touchstart', (e) => { dragging = true; });
+    document.addEventListener('mousemove', (e) => { if (dragging) updateFromEvent(e); });
+    document.addEventListener('touchmove', (e) => { if (dragging) updateFromEvent(e); });
+    document.addEventListener('mouseup', () => dragging = false);
+    document.addEventListener('touchend', () => dragging = false);
+    track.addEventListener('click', updateFromEvent);
+  }
+
+  setupSliderDrag('speed', speedMin, speedMax, () => speedValue, (v) => speedValue = v, updateSpeedDisplay);
+  setupSliderDrag('pitch', pitchMin, pitchMax, () => pitchValue, (v) => pitchValue = v, updatePitchDisplay);
+
+  function clearText() {
+    document.getElementById('text-input').value = '';
+    document.getElementById('char-count').textContent = '0';
+  }
+
+  async function pasteText() {
+    try {
+      const text = await navigator.clipboard.readText();
+      const input = document.getElementById('text-input');
+      input.value = text;
+      document.getElementById('char-count').textContent = text.length.toLocaleString();
+    } catch (err) {
+      alert(translations[currentLang].alert_clipboard);
+    }
+  }
+
+  document.getElementById('text-input').addEventListener('input', function() {
+    const count = this.value.length;
+    const counter = document.getElementById('char-count');
+    counter.textContent = count.toLocaleString();
+    counter.parentElement.classList.toggle('limit', count >= 10000);
+  });
+
+  function openCloneModal() {
+    if (customVoices.length >= 5) {
+      alert(translations[currentLang].alert_max_voices);
+      return;
+    }
+    document.getElementById('clone-modal').classList.add('show');
+  }
+
+  function closeCloneModal() {
+    document.getElementById('clone-modal').classList.remove('show');
+    document.getElementById('clone-name').value = '';
+    document.getElementById('clone-file').value = '';
+  }
+
+  function submitClone() {
+    const name = document.getElementById('clone-name').value.trim();
+    const file = document.getElementById('clone-file').files[0];
+    
+    if (!name) {
+      alert(translations[currentLang].alert_enter_name);
+      return;
+    }
+    if (!file) {
+      alert(translations[currentLang].alert_upload_file);
+      return;
+    }
+
+    const voiceId = 'custom_' + Date.now();
+    customVoices.push({ id: voiceId, name: name });
+    
+    renderCustomVoices();
+    closeCloneModal();
+    alert(translations[currentLang].alert_voice_created + name + translations[currentLang].alert_created_success);
+  }
+
+  function renderCustomVoices() {
+    const grid = document.getElementById('custom-voices');
+    document.getElementById('clone-count').textContent = customVoices.length;
+    
+    let html = `
+      <div class="voice-card add-voice-card" onclick="openCloneModal()">
+        <span style="font-size:20px;">+</span>
+        <span data-i18n="create_new_voice">${translations[currentLang].create_new_voice}</span>
+      </div>
+    `;
+    
+    customVoices.forEach(voice => {
+      html += `
+        <div class="voice-card" onclick="selectVoice(this, '${voice.id}')">
+          <div class="voice-avatar" style="background: linear-gradient(135deg, var(--gold-dark), var(--gold));">🎙️</div>
+          <div class="voice-info">
+            <div class="voice-name">${voice.name}</div>
+            <div class="voice-type">${translations[currentLang].custom_voice_type}</div>
+          </div>
+          <button class="voice-delete-btn" onclick="deleteVoice(event, '${voice.id}')">✕</button>
+        </div>
+      `;
+    });
+    
+    grid.innerHTML = html;
+  }
+
+  function deleteVoice(event, voiceId) {
+    event.stopPropagation();
+    if (!confirm(translations[currentLang].alert_delete_confirm)) return;
+    
+    customVoices = customVoices.filter(v => v.id !== voiceId);
+    renderCustomVoices();
+  }
+
+  function generateSpeech() {
+    const text = document.getElementById('text-input').value.trim();
+    if (!text) {
+      alert(translations[currentLang].alert_enter_text);
+      return;
+    }
+    
+    // Show audio section
+    document.getElementById('audio-section').classList.add('show');
+    
+    // Scroll to audio section
+    document.getElementById('audio-section').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function togglePlay() {
+    isPlaying = !isPlaying;
+    const btn = document.getElementById('play-btn');
+    btn.textContent = isPlaying ? '⏸' : '▶';
+    
+    if (isPlaying) {
+      // Simulate playing
+      let currentTime = 0;
+      const interval = setInterval(() => {
+        currentTime++;
+        const mins = Math.floor(currentTime / 60);
+        const secs = currentTime % 60;
+        document.getElementById('audio-time').textContent = 
+          `${mins}:${secs.toString().padStart(2, '0')} / 1:15`;
+        
+        if (currentTime >= audioDuration) {
+          clearInterval(interval);
+          isPlaying = false;
+          btn.textContent = '▶';
+        }
+      }, 1000);
+    }
+  }
+
+  function adjustVolume(event) {
+    const slider = event.currentTarget;
+    const fill = document.getElementById('volume-fill');
+    const rect = slider.getBoundingClientRect();
+    const x = event.clientX - rect.left;
+    const percent = (x / rect.width) * 100;
+    fill.style.width = percent + '%';
+  }
+
+  function downloadFree() {
+    const audioName = document.getElementById('audio-name').value || 'audio';
+    alert('Downloading: ' + audioName + '.mp3');
+  }
+
+  function downloadVIP() {
+    alert('VIP Subscription - Coming Soon!');
+  }
+
+  // Initialize displays
+  updateSpeedDisplay();
+  updatePitchDisplay();
+</script>
+
+</body>
+</html>
+ 
+  
